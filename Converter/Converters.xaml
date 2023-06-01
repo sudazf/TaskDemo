@@ -1,0 +1,9 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:TaskDemo.Converter">
+
+    <converters:PercenetToStringConverter x:Key="PercenetToStringConverter" />
+    <converters:IntToSolidColorBrushConverter x:Key="IntToSolidColorBrushConverter" />
+    
+
+</ResourceDictionary>
