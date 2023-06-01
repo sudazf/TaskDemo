@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Threading;
 using TaskDemo.ViewModel;
 
 namespace TaskDemo
@@ -16,10 +11,21 @@ namespace TaskDemo
 	{
 		protected override void OnStartup(StartupEventArgs e)
 		{
-			MainWindow mainV = new TaskDemo.MainWindow();
-			MainWindowViewModel mainVM = new MainWindowViewModel();
-			mainV.DataContext = mainVM;
-			mainV.Show();
+			var window = new MainWindow();
+			var viewModel = new MainWindowViewModel();
+			window.DataContext = viewModel;
+            DispatcherHelper.SetDispatcher(window.Dispatcher);
+            window.Show();
 		}
 	}
+
+    public static class DispatcherHelper
+    {
+		public static Dispatcher MainDispatcher;
+
+        public static void SetDispatcher(Dispatcher dispatcher)
+        {
+            MainDispatcher = dispatcher;
+        }
+    }
 }

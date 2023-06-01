@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
 using TaskDemo.ViewModel.Base;
 using VbotFramework.Delagate;
 
@@ -20,26 +16,8 @@ namespace TaskDemo.Model
 		/// </summary>
 		private int taskId;
 
-		/// <summary>
-		/// Task 
-		/// </summary>
-		private Task task;
 
-		/// <summary>
-		/// Thread
-		/// </summary>
-		private Thread thread;
-
-		/// <summary>
-		/// ManualResetEvent
-		/// </summary>
-		private ManualResetEvent manualResetEvent;
-
-
-
-
-
-		/// <summary>
+        /// <summary>
 		/// ManualResetEvent
 		/// </summary>
 		private EventWaitHandle eventWaitHandle;
@@ -49,12 +27,7 @@ namespace TaskDemo.Model
 		/// </summary>
 		private int taskProgress;
 
-		/// <summary>
-		/// 进度条颜色索引
-		/// </summary>
-		private int taskProgressColorIndex;
-
-		#region Task 控制
+        #region Task 控制
 
 		/// <summary>
 		/// CancellationTokenSource
@@ -102,72 +75,67 @@ namespace TaskDemo.Model
 		/// </summary>
 		public int TaskId
 		{
-			get { return taskId; }
-			set
+			get => taskId;
+            set
 			{
 				taskId = value;
 				OnPropertyChanged("TaskId");
 			}
 		}
 
-		/// <summary>
-		/// Task
-		/// </summary>
-		public Task Task
-		{
-			get { return task; }
-			set { task = value; }
-		}
+        /// <summary>
+        /// Task 
+        /// </summary>
+        public Task Task { get; set; }
 
-		/// <summary>
-		/// Thread
-		/// </summary>
-		public Thread Thread
-		{
-			get { return thread; }
-			set { thread = value; }
-		}
+        /// <summary>
+        /// Thread
+        /// </summary>
+        public Thread Thread { get; set; }
 
-		/// <summary>
-		/// ManualResetEvent
-		/// </summary>
-		public ManualResetEvent ManualResetEvent
-		{
-			get { return manualResetEvent; }
-			set { manualResetEvent = value; }
-		}
+        /// <summary>
+        /// ManualResetEvent
+        /// </summary>
+        public ManualResetEvent ManualResetEvent { get; set; }
 
-		/// <summary>
-		/// 进度值
+        /// <summary>
+		/// 进度
 		/// </summary>
 		public int TaskProgress
 		{
-			get { return taskProgress; }
-			set
+			get => taskProgress;
+            set
 			{
-				taskProgress = value;
-				OnPropertyChanged("TaskProgress");
+                taskProgress = value;
+
+                if (DispatcherHelper.MainDispatcher.CheckAccess())
+                {
+                    OnPropertyChanged("TaskProgress");
+                }
+                else
+                {
+                    DispatcherHelper.MainDispatcher.Invoke(() =>
+                    {
+                        OnPropertyChanged("TaskProgress");
+                    });
+                }
 			}
 		}
 
-		/// <summary>
-		/// 进度条颜色索引
-		/// </summary>
-		public int TaskProgressColorIndex
-		{
-			get { return taskProgressColorIndex; }
-			set { taskProgressColorIndex = value; }
-		}
+        /// <summary>
+        /// 进度条颜色索引
+        /// </summary>
+        public int TaskProgressColorIndex { get; set; }
 
-		#region 按钮状态
+        #region 按钮状态
 
 		/// <summary>
 		/// 可开始
 		/// </summary>
 		public bool CanStart
 		{
-			get { return canStart; }
-			set
+			get => canStart;
+            set
 			{
 				canStart = value;
 				OnPropertyChanged("CanStart");
@@ -179,8 +147,8 @@ namespace TaskDemo.Model
 		/// </summary>
 		public bool CanStop
 		{
-			get { return canStop; }
-			set
+			get => canStop;
+            set
 			{
 				canStop = value;
 				OnPropertyChanged("CanStop");
@@ -192,8 +160,8 @@ namespace TaskDemo.Model
 		/// </summary>
 		public bool CanSuspend
 		{
-			get { return canSuspend; }
-			set
+			get => canSuspend;
+            set
 			{
 				canSuspend = value;
 				OnPropertyChanged("CanSuspend");
@@ -205,8 +173,8 @@ namespace TaskDemo.Model
 		/// </summary>
 		public bool CanResume
 		{
-			get { return canResume; }
-			set
+			get => canResume;
+            set
 			{
 				canResume = value;
 				OnPropertyChanged("CanResume");
@@ -232,7 +200,7 @@ namespace TaskDemo.Model
 					abortThread = false;
 
 					ManualResetEvent = new ManualResetEvent(false);
-					Thread = new Thread(new ParameterizedThreadStart(StartByThread));
+					Thread = new Thread(StartByThread);
 					Thread.Start(ManualResetEvent);
 				});
 			}

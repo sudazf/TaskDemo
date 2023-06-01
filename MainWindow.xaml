@@ -1,40 +1,43 @@
-﻿<Window x:Class="TaskDemo.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TaskDemo"
-        mc:Ignorable="d"
-        Title="多线程进度示例" Height="600" Width="1000" WindowStartupLocation="CenterScreen">
+﻿<Window
+    x:Class="TaskDemo.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModel="clr-namespace:TaskDemo.ViewModel"
+    Title="多线程进度示例"
+    Width="1000"
+    Height="600"
+    d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel}"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
 
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/TaskDemo;component/Style/FIcon/FIcon.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/TaskDemo;component/Style/Button/Button.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/TaskDemo;component/Style/ProgressBar/ProgressBar.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
-    
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-            <RowDefinition  Height="60"></RowDefinition>
+            <RowDefinition />
+            <RowDefinition Height="60" />
         </Grid.RowDefinitions>
-        <DataGrid Grid.Row="0" Margin="1" Background="Transparent" ItemsSource="{Binding Tasks}" AutoGenerateColumns="False" RowHeight="35" CanUserAddRows="False"  RowHeaderWidth="0">
-            <DataGrid.RowStyle >
+        <DataGrid
+            Grid.Row="0"
+            Margin="1"
+            AutoGenerateColumns="False"
+            Background="Transparent"
+            CanUserAddRows="False"
+            ItemsSource="{Binding Tasks}"
+            RowHeaderWidth="0"
+            RowHeight="35">
+            <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
-                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="Background" Value="White" />
                     <Style.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Background" Value="Transparent" />
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter  Property="Background" Value="Transparent" />
+                            <Setter Property="Background" Value="Transparent" />
                         </MultiTrigger>
                     </Style.Triggers>
                 </Style>
@@ -46,94 +49,156 @@
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter  Property="Background" Value="Transparent" />
-                            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="BorderBrush" Value="Transparent" />
                         </MultiTrigger>
                     </Style.Triggers>
                 </Style>
             </DataGrid.CellStyle>
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="序号" Width="0.5*" CanUserSort="True" SortMemberPath="TaskId">
+                <DataGridTemplateColumn
+                    Width="0.5*"
+                    CanUserSort="True"
+                    Header="序号"
+                    SortMemberPath="TaskId">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding TaskId}" Margin="10,0,0,0" FontSize="15" Foreground="Black"  HorizontalAlignment="Left" VerticalAlignment="Center">
-                            </TextBlock>
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontSize="15"
+                                Foreground="Black"
+                                Text="{Binding TaskId}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="进度" Width="2*" CanUserSort="False">
+                <DataGridTemplateColumn
+                    Width="2*"
+                    CanUserSort="False"
+                    Header="进度">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ProgressBar Minimum="0" Maximum="100" Value="{Binding TaskProgress}"  Foreground="{Binding TaskProgressColorIndex,Converter={StaticResource IntToSolidColorBrushConverter}}" IsIndeterminate="False"  Margin="1" />
+                            <ProgressBar
+                                Margin="1"
+                                Foreground="{Binding TaskProgressColorIndex, Converter={StaticResource IntToSolidColorBrushConverter}}"
+                                IsIndeterminate="False"
+                                Maximum="100"
+                                Minimum="0"
+                                Value="{Binding TaskProgress}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="开始" Width="0.5*" CanUserSort="False">
+                <DataGridTemplateColumn
+                    Width="0.5*"
+                    CanUserSort="False"
+                    Header="开始">
                     <DataGridTemplateColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
                         </Style>
                     </DataGridTemplateColumn.HeaderStyle>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Width="26" Height="26" Command="{Binding StartCommand}" Style="{StaticResource GridButton}" IsEnabled="{Binding CanStart}">
+                            <Button
+                                Width="26"
+                                Height="26"
+                                Command="{Binding StartCommand}"
+                                IsEnabled="{Binding CanStart}"
+                                Style="{StaticResource GridButton}">
                                 <Button.Content>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="&#xe6f4;" FontSize="18"  Style="{StaticResource FIcon}"></TextBlock>
+                                        <TextBlock
+                                            FontSize="18"
+                                            Style="{StaticResource FIcon}"
+                                            Text="&#xe6f4;" />
                                     </StackPanel>
                                 </Button.Content>
                             </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="暂停" Width="0.5*" CanUserSort="False">
+                <DataGridTemplateColumn
+                    Width="0.5*"
+                    CanUserSort="False"
+                    Header="暂停">
                     <DataGridTemplateColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
                         </Style>
                     </DataGridTemplateColumn.HeaderStyle>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Width="26" Height="26" Command="{Binding SuspendCommand}" Style="{StaticResource GridButton}" IsEnabled="{Binding CanSuspend}">
+                            <Button
+                                Width="26"
+                                Height="26"
+                                Command="{Binding SuspendCommand}"
+                                IsEnabled="{Binding CanSuspend}"
+                                Style="{StaticResource GridButton}">
                                 <Button.Content>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="&#xe6f3;" FontSize="18" Style="{StaticResource FIcon}"></TextBlock>
+                                        <TextBlock
+                                            FontSize="18"
+                                            Style="{StaticResource FIcon}"
+                                            Text="&#xe6f3;" />
                                     </StackPanel>
                                 </Button.Content>
                             </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="继续" Width="0.5*" CanUserSort="False">
+                <DataGridTemplateColumn
+                    Width="0.5*"
+                    CanUserSort="False"
+                    Header="继续">
                     <DataGridTemplateColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
                         </Style>
                     </DataGridTemplateColumn.HeaderStyle>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Width="26" Height="26" Command="{Binding ResumeCommand}" Style="{StaticResource GridButton}" IsEnabled="{Binding CanResume}">
+                            <Button
+                                Width="26"
+                                Height="26"
+                                Command="{Binding ResumeCommand}"
+                                IsEnabled="{Binding CanResume}"
+                                Style="{StaticResource GridButton}">
                                 <Button.Content>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="&#xe6dc;" FontSize="18" Style="{StaticResource FIcon}"></TextBlock>
+                                        <TextBlock
+                                            FontSize="18"
+                                            Style="{StaticResource FIcon}"
+                                            Text="&#xe6dc;" />
                                     </StackPanel>
                                 </Button.Content>
                             </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="停止" Width="0.5*" CanUserSort="False" >
+                <DataGridTemplateColumn
+                    Width="0.5*"
+                    CanUserSort="False"
+                    Header="停止">
                     <DataGridTemplateColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
                         </Style>
                     </DataGridTemplateColumn.HeaderStyle>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Width="26" Height="26" Command="{Binding StopCommand}" Style="{StaticResource GridButton}"  IsEnabled="{Binding CanStop}">
+                            <Button
+                                Width="26"
+                                Height="26"
+                                Command="{Binding StopCommand}"
+                                IsEnabled="{Binding CanStop}"
+                                Style="{StaticResource GridButton}">
                                 <Button.Content>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="&#xe6ca;" FontSize="18"  Style="{StaticResource FIcon}"></TextBlock>
+                                        <TextBlock
+                                            FontSize="18"
+                                            Style="{StaticResource FIcon}"
+                                            Text="&#xe6ca;" />
                                     </StackPanel>
                                 </Button.Content>
                             </Button>
@@ -142,79 +207,139 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <StackPanel Orientation="Horizontal" Grid.Row="1">
-            <Button Height="30" Width="80" Margin="3" Command="{Binding NewTaskCommand}" Style="{StaticResource AddButton}">
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button
+                Width="80"
+                Height="30"
+                Margin="3"
+                Command="{Binding NewTaskCommand}"
+                Style="{StaticResource AddButton}">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xe7d6;" FontSize="14" Foreground="White" Style="{StaticResource FIcon}"></TextBlock>
-                        <TextBlock Text="新增任务" Margin="2,0,0,0" Foreground="White"></TextBlock>
+                        <TextBlock
+                            FontSize="14"
+                            Foreground="White"
+                            Style="{StaticResource FIcon}"
+                            Text="&#xe7d6;" />
+                        <TextBlock
+                            Margin="2,0,0,0"
+                            Foreground="White"
+                            Text="新增任务" />
                     </StackPanel>
                 </Button.Content>
             </Button>
 
-            <Button Height="30" Width="150" Margin="3" Command="{Binding StartAllTaskByThreadCommand}" Style="{StaticResource AddButton}">
+            <Button
+                Width="150"
+                Height="30"
+                Margin="3"
+                Command="{Binding StartAllTaskByThreadCommand}"
+                Style="{StaticResource AddButton}">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xe64b;" FontSize="13" Foreground="White" Style="{StaticResource FIcon}"></TextBlock>
-                        <TextBlock Text="使用 Thread 并发" Margin="2,0,0,0" Foreground="White"></TextBlock>
+                        <TextBlock
+                            FontSize="13"
+                            Foreground="White"
+                            Style="{StaticResource FIcon}"
+                            Text="&#xe64b;" />
+                        <TextBlock
+                            Margin="2,0,0,0"
+                            Foreground="White"
+                            Text="使用 Thread 并发" />
                     </StackPanel>
                 </Button.Content>
             </Button>
-            <Button Height="30" Width="150" Margin="3" Command="{Binding StartAllTaskCommand}" Style="{StaticResource AddButton}">
+            <Button
+                Width="150"
+                Height="30"
+                Margin="3"
+                Command="{Binding StartAllTaskCommand}"
+                Style="{StaticResource AddButton}">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xe65e;" FontSize="13" Foreground="White" Style="{StaticResource FIcon}"></TextBlock>
-                        <TextBlock Text="使用 Task+Wait 并发" Margin="2,0,0,0" Foreground="White"></TextBlock>
+                        <TextBlock
+                            FontSize="13"
+                            Foreground="White"
+                            Style="{StaticResource FIcon}"
+                            Text="&#xe65e;" />
+                        <TextBlock
+                            Margin="2,0,0,0"
+                            Foreground="White"
+                            Text="使用 Task+Wait 并发" />
                     </StackPanel>
                 </Button.Content>
             </Button>
 
-            <Button Height="30" Width="150" Margin="3" Command="{Binding StartAllTaskBySyncCommand}" Style="{StaticResource AddButton}">
+            <Button
+                Width="150"
+                Height="30"
+                Margin="3"
+                Command="{Binding StartAllTaskBySyncCommand}"
+                Style="{StaticResource AddButton}">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xe651;" FontSize="13" Foreground="White" Style="{StaticResource FIcon}"></TextBlock>
-                        <TextBlock Text="使用 async+await 并发" Margin="2,0,0,0" Foreground="White"></TextBlock>
+                        <TextBlock
+                            FontSize="13"
+                            Foreground="White"
+                            Style="{StaticResource FIcon}"
+                            Text="&#xe651;" />
+                        <TextBlock
+                            Margin="2,0,0,0"
+                            Foreground="White"
+                            Text="使用 async+await 并发" />
                     </StackPanel>
                 </Button.Content>
             </Button>
 
-            <Button Height="30" Width="80" Margin="3">
+            <Button
+                Width="80"
+                Height="30"
+                Margin="3">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="全部完成" Margin="2,0,0,0" Foreground="White"></TextBlock>
+                        <TextBlock
+                            Margin="2,0,0,0"
+                            Foreground="White"
+                            Text="全部完成" />
                     </StackPanel>
                 </Button.Content>
                 <Button.Style>
                     <Style TargetType="Button">
-                        <Setter Property="IsHitTestVisible" Value="False"></Setter>
-                        <Setter Property="BorderThickness" Value="0"></Setter>
+                        <Setter Property="IsHitTestVisible" Value="False" />
+                        <Setter Property="BorderThickness" Value="0" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding TasksAllCompleted,UpdateSourceTrigger=PropertyChanged}" Value="1">
-                                <Setter Property="Background" Value="Green"></Setter>
+                            <DataTrigger Binding="{Binding TasksAllCompleted, UpdateSourceTrigger=PropertyChanged}" Value="1">
+                                <Setter Property="Background" Value="Green" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding TasksAllCompleted,UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                <Setter Property="Background" Value="LightGray"></Setter>
+                            <DataTrigger Binding="{Binding TasksAllCompleted, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                <Setter Property="Background" Value="LightGray" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </Button.Style>
             </Button>
-            <Button Height="30" Width="80" Margin="3">
+            <Button
+                Width="80"
+                Height="30"
+                Margin="3">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="统一完成" Margin="2,0,0,0" Foreground="White"></TextBlock>
+                        <TextBlock
+                            Margin="2,0,0,0"
+                            Foreground="White"
+                            Text="统一完成" />
                     </StackPanel>
                 </Button.Content>
                 <Button.Style>
                     <Style TargetType="Button">
-                        <Setter Property="IsHitTestVisible" Value="False"></Setter>
-                        <Setter Property="BorderThickness" Value="0"></Setter>
+                        <Setter Property="IsHitTestVisible" Value="False" />
+                        <Setter Property="BorderThickness" Value="0" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding TasksCompletedByAll,UpdateSourceTrigger=PropertyChanged}" Value="1">
-                                <Setter Property="Background" Value="Green"></Setter>
+                            <DataTrigger Binding="{Binding TasksCompletedByAll, UpdateSourceTrigger=PropertyChanged}" Value="1">
+                                <Setter Property="Background" Value="Green" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding TasksCompletedByAll,UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                <Setter Property="Background" Value="LightGray"></Setter>
+                            <DataTrigger Binding="{Binding TasksCompletedByAll, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                <Setter Property="Background" Value="LightGray" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

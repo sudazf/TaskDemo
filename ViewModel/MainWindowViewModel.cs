@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -52,7 +49,7 @@ namespace TaskDemo.ViewModel
 		/// <summary>
 		/// 是否全部完成
 		/// </summary>
-		private int tasksAllCompleted;
+		private int tasksAllCompleted = 1;
 
 		/// <summary>
 		/// 是否统一完成
@@ -73,8 +70,8 @@ namespace TaskDemo.ViewModel
 		/// </summary>
 		public int TasksAllCompleted
 		{
-			get { return tasksAllCompleted; }
-			set
+			get => tasksAllCompleted;
+            set
 			{
 				tasksAllCompleted = value;
 				OnPropertyChanged("TasksAllCompleted");
@@ -86,8 +83,8 @@ namespace TaskDemo.ViewModel
 		/// </summary>
 		public int TasksCompletedByAll
 		{
-			get { return tasksCompletedByAll; }
-			set
+			get => tasksCompletedByAll;
+            set
 			{
 				tasksCompletedByAll = value;
 				OnPropertyChanged("TasksCompletedByAll");
@@ -99,8 +96,8 @@ namespace TaskDemo.ViewModel
 		/// </summary>
 		public ObservableCollection<JTask> Tasks
 		{
-			get { return tasks; }
-			set
+			get => tasks;
+            set
 			{
 				tasks = value;
 				OnPropertyChanged("Tasks");
@@ -116,7 +113,7 @@ namespace TaskDemo.ViewModel
 			{
 				return new DelegateCommand<object>((obj) =>
 				{
-					JTask task = new JTask();
+					var task = new JTask();
 					task.TaskId = Tasks.Count;
 					task.TaskProgress = 0;
 					task.TaskProgressColorIndex = task.TaskId % 5;
@@ -216,7 +213,8 @@ namespace TaskDemo.ViewModel
 
 			for (int i = 0; i < Tasks.Count; i++)
 			{
-				if (Tasks[i].Task != null && Tasks[i].Task.Status == TaskStatus.Running)
+				if ((Tasks[i].Task != null && Tasks[i].Task.Status == TaskStatus.Running) ||
+                    (Tasks[i].Thread != null && Tasks[i].Thread.ThreadState != ThreadState.Stopped))
 				{
 					MessageBox.Show("线程正在运行中，不可重复开始", "系统提示", MessageBoxButton.OK, MessageBoxImage.Information);
 					return false;
